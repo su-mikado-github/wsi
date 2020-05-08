@@ -1,0 +1,20 @@
+<?php
+$user = $status->get_param('user');
+?>
+<?=Utils::template('/common/screen.html', ['title'=>'トップ', 'script_id'=>'/common/top.js'], function() use($user) { ?>
+<h1>ユーザー</h1>
+<table class="table table-bordered">
+<thead>
+<tr>
+  <th>ユーザーID</th>
+  <th>氏名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><?=$user['user_id'] ?></td>
+  <td><?=$user['nickname'] ?></td>
+</tr>
+</tbody>
+</table>
+<?php }); ?>

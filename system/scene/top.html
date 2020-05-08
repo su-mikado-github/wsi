@@ -1,0 +1,58 @@
+<?=Utils::template('/system/screen.html', ['title'=>'システム設定', 'script_id'=>'/system/top.js'], function() { ?>
+<table class="w-100 h-100">
+<thead>
+<tr>
+  <td colspan="2">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">動画配信（仮）</a>
+<!--
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+ -->
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+        <ul class="navbar-nav mr-auto mt-2">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" aria-label="Search">
+          <button data-id="goSearch" class="btn btn-outline-success my-2 my-sm-0" type="button">検索</button>
+        </form>
+      </div>
+    </nav>
+  </td>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td colspan="2" style="height: 4px; ovrflow: hidden; line-height: 4px;">&nbsp;</td>
+</tr>
+<tr>
+  <td class="align-top p-0" style="width: 200px;">
+    <div class="list-group w-100 m-0">
+      <a data-id="goUserList" href="#" class="list-group-item list-group-item-action active rounded-0">ユーザー・リスト</a>
+      <a data-id="btnDummyMenu1" href="#" class="list-group-item list-group-item-action" data-toggle="modal">ダミーメニュー①</a>
+      <a href="#" class="list-group-item list-group-item-action">ダミーメニュー②</a>
+      <a href="#" class="list-group-item list-group-item-action">ダミーメニュー③</a>
+      <a href="#" class="list-group-item list-group-item-action">ダミーメニュー④</a>
+      <a href="#" class="list-group-item list-group-item-action">ダミーメニュー⑤</a>
+      <a href="#" class="list-group-item list-group-item-action">ダミーメニュー⑥</a>
+      <a href="#" class="list-group-item list-group-item-action">ダミーメニュー⑦</a>
+    </div>
+  </td>
+  <td class="align-top pl-1">
+    <iframe data-id="frmContents" data-type="WSI.InlineFrame" name="frmContents" class="w-100 h-100 border-0 overflow-auto"></iframe>
+  </td>
+</tr>
+</tbody>
+</table>
+<?=Utils::template('/system/dialog.html', ['id'=>'dlgMain']) ?>
+<?php }) ?>

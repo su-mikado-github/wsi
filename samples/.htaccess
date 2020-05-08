@@ -1,0 +1,18 @@
+Options +FollowSymLinks
+
+<Files ~ "[.](phar)$">
+Require all denied
+</Files>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+#RewriteBase /samples/
+
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^.*/index.php/.*$
+RewriteCond %{REQUEST_URI} !^.*/index.php$
+RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+#RewriteRule ^(.*)$ index.php/$1 [L,R=301]
+</IfModule>

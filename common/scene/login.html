@@ -1,0 +1,7 @@
+<?=Utils::template('/common/screen.html', ['title'=>'認証', 'script_id'=>'/common/login.js'], function() { ?><div class="container h-50 d-flex">
+<div class="align-self-center"><form id="main">
+<div><label>ID:</label>&nbsp;<input data-id="loginId" type="text"></div>
+<div><label>PW:</label>&nbsp;<input data-id="loginPw" type="password"></div>
+<div><button data-id="goLogin" type="button">ログイン</button></div>
+</form></div>
+</div><?php }); ?>
