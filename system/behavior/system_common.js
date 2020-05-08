@@ -2,8 +2,8 @@
  *
  */
 WSI.namespace("system", function(ns) {
-	ns.Dialog = WSI.classdef(WSI.Dialog, function Dialog(tag) {
-		WSI.Dialog.call(this, tag);
+	ns.Dialog = WSI.classdef(WSI.Dialog, function Dialog(screen, tag) {
+		WSI.Dialog.call(this, screen, tag);
 
 		var _base = this.base();
 		var _this = this;
@@ -33,24 +33,50 @@ WSI.namespace("system", function(ns) {
 
 //			_message = new WSI.Message(_bodyWindow, _bodyWindow.location.protocol+"//"+_bodyWindow.location.hostname);
 //
-//			_title = _this.controls[_id+"_label"];
-//			_close = _this.controls[_id+"_close"].click(function(e) {
+			_title = _this.controls[_id+"_label"];
+			_close = _this.controls[_id+"_close"].click(function(e) {
+				_body.message("close");
 //				_message.raise("close");
-//			});
-//			_cancel = _this.controls[_id+"_cancel"].click(function(e) {
+			});
+			_cancel = _this.controls[_id+"_cancel"].click(function(e) {
+				_body.message("cancel");
 //				_message.raise("cancel");
-//			});
-//			_save = _this.controls[_id+"_save"].click(function(e) {
+			});
+			_save = _this.controls[_id+"_save"].click(function(e) {
+				_body.message("save");
 //				_message.raise("save");
-//			});
-//			_commit = _this.controls[_id+"_commit"].click(function(e) {
+			});
+			_commit = _this.controls[_id+"_commit"].click(function(e) {
+				_body.message("commit");
 //				_message.raise("commit");
-//			});
-//
+			});
+
+			_body.on("message.ready", function(e) {
+				$("#"+_id).modal("show");
+			});
+
+			_body.on("message.closed", function(e) {
+				$("#"+_id).modal("hide");
+			});
+
+			_body.on("message.canceled", function(e) {
+				$("#"+_id).modal("hide");
+			});
+
+			_body.on("message.saved", function(e) {
+				$("#"+_id).modal("hide");
+			});
+
+			_body.on("message.commited", function(e) {
+				$("#"+_id).modal("hide");
+			});
+
+
+
 //			_body.on("load", function(data) {
 //				$("#"+_id).modal("show");
 //			});
-//
+
 //			_message.on("closed", function(data) {
 //				$("#"+_id).modal("hide");
 //			});

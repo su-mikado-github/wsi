@@ -15,5 +15,7 @@ WSI.screendef(function Useredit() {
 		_base.initialize();
 		//
 		_this.on("message.save", parent_save);
-	}
+
+		_this.message("ready");
+	};
 });

@@ -1,2 +1,21 @@
-<div id="<?=$attributes['id'] ?>" data-id="<?=$attributes['id'] ?>" data-type="system.Dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="<?=$attributes['id'] ?>" data-id="<?=$attributes['id'] ?>" data-type="system.Dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="<?=$attributes['id'] ?>_label" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" data-id="<?=$attributes['id'] ?>_label"></h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <iframe data-id="<?=$attributes['id'] ?>_body" data-type="WSI.InlineFrame" class="w-100 h-100 border-0 overflow-auto"></iframe>
+    </div>
+    <div class="modal-footer">
+      <button data-id="<?=$attributes['id'] ?>_close" type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+      <button data-id="<?=$attributes['id'] ?>_cancel" type="button" class="btn btn-secondary" data-dismiss="modal">キャンセル</button>
+      <button data-id="<?=$attributes['id'] ?>_save" type="button" class="btn btn-primary">保存</button>
+      <button data-id="<?=$attributes['id'] ?>_commit" type="button" class="btn btn-primary">確定</button>
+    </div>
+  </div>
+</div>
 </div>

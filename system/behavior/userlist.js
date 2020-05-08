@@ -1,19 +1,19 @@
 /**
  *
  */
-WSI.screendef(function Top() {
+WSI.screendef(function Userlist() {
 	WSI.Screen.call(this);
 
 	var _base = this.base();
 	var _this = this;
 
-	var _parentMessage = new WSI.Message(parent, parent.location.protocol+"//"+parent.location.hostname);
-
 	var _users = [];
 
-	_this.mapping();
+//	_this.mapping();
 
 	_this.initialize = function initialize() {
+		_base.initialize();
+
 		WSI.method("<?=url('/system/userlist.json') ?>", null, null, function(result) {
 			console.log(JSON.stringify(result));
 
@@ -35,14 +35,14 @@ WSI.screendef(function Top() {
 				);
 			}
 		});
-	};
 
-	_this.controls.tblUserlist.click(function(e) {
-		if (e.target.tagName === "TD") {
-			var tag = WSI.tag(e.target);
-			var user_id = tag.parent().data("user_id");
-//			_parentMessage.raise("useredit", { user_id: user_id });
-			_this.message("useredit", { user_id: user_id });
-		}
-	});
+		_this.controls.tblUserlist.click(function(e) {
+			if (e.target.tagName === "TD") {
+				var tag = WSI.tag(e.target);
+				var user_id = tag.parent().data("user_id");
+//				_parentMessage.raise("useredit", { user_id: user_id });
+				_this.message("useredit", { user_id: user_id });
+			}
+		});
+	};
 });

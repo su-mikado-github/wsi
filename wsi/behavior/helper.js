@@ -157,31 +157,15 @@
 		}
 	}
 
-	function mapping(tag) {
-		if (tag) {
-			var nodeList = tag.target.querySelectorAll("[data-id]");
-			for (var i=0; i<nodeList.length; i++) {
-				var node = nodeList[i];
-				if (tag.target !== node) {
-					var id = node.dataset.id;
-					var ctorName = node.dataset.type || "WSI.Control";
-
-					var ctor = findClass(ctorName);
-					if (!ctor) {
-						console.log("Not found '"+ctorName+"'");
-						return null;
-					}
-					if (typeof(tag.controls[id]) === "undefined") {
-						var control = new ctor(node);
-						tag.controls[id] = control;
-					}
-					else {
-						console.log("'"+id+"' is duplicated value of 'data-id' attribute's.");
-					}
-				}
-			}
+	function parseQueries() {
+		var result = [];
+		var params = window.location.search.slice(1).split('&');
+		for (var i in params) {
+			var param = params[i].split("=");
+			result.push(param[0]);
+			result[param[0]] = param[1] || null;
 		}
-		return tag;
+		return result;
 	}
 
 	var Server = classdef(Object, function Server(_url, _method, _contentType, _profiles) {
@@ -269,64 +253,6 @@
 		};
 	});
 
-	var Message = classdef(Object, function Message(_target_window, _accept_origins) {
-		Object.call(this);
-
-		var _this = this;
-		var _base = this.base();
-
-		var _handlers = {};
-
-		if (!_accept_origins) {
-			_accept_origins = [ location.protocol+"//"+location.hostname ];
-		}
-		else if (typeof(_accept_origins) === "string") {
-			_accept_origins = [ _accept_origins ];
-		}
-
-		function messageHandler(e) {
-			var accepted = false;
-			for (var i in _accept_origins) {
-				if (_accept_origins[i] == e.origin) {
-					accepted = true;
-					break;
-				}
-			}
-			if (accepted) {
-				var eventName = e.data.eventName || "";
-				if (typeof(_handlers[eventName]) === "function") {
-					var handler = _handlers[eventName];
-					handler(e.data.params);
-				}
-			}
-		}
-
-		_this.on = function on(eventName, handler, option) {
-			//
-			if (typeof(handler) === "function") {
-				_handlers[eventName] = function(params) {
-					if (typeof(option) === "undefined") {
-						handler(params);
-					}
-					else {
-						handler(params, option);
-					}
-				}
-			}
-			return _this;
-		};
-
-		_this.raise = function raise(eventName, params, origin) {
-			//
-			if (_target_window.postMessage) {
-				_target_window.postMessage({ eventName: eventName, params: params }, origin || "/");
-			}
-			return _this;
-		};
-
-		self.addEventListener("message" , messageHandler);
-	});
-
 	var Tag = classdef(Object, function Tag(tag) {
 		Object.call(this);
 
@@ -400,7 +326,8 @@
 		_this.raise = function raise(eventTypeName, eventName, params) {
 			var eventType = findClass(eventTypeName);
 			if (eventType && typeof(eventType) === "function") {
-				var event = new eventType(eventName, params);
+				var event = new eventType(eventName);
+				event.data = params;
 				_tag.dispatchEvent(event);
 			}
 			return _this;
@@ -678,6 +605,8 @@
 		ns.findClass = findClass;
 		ns.formData = formatData;
 
+		ns.queries = parseQueries();
+
 		ns.Tag = Tag;
 
 		ns.Control = classdef(Tag, function Control(screen, tag) {
@@ -717,7 +646,10 @@
 						if (typeof(_this.controls[id]) === "undefined") {
 							var control = new ctor(_this.screen, node);
 							_this.controls[id] = control;
-							if (control instanceof WSI.Control) {
+							if (control instanceof WSI.Panel) {
+								control.mapping().initialize();
+							}
+							else if (control instanceof WSI.Control) {
 								control.initialize();
 							}
 						}
@@ -736,29 +668,67 @@
 			var _base = this.base();
 			var _this = this;
 
+			var _id = _this.data("id");
+			_this.attr("name", _id);
+
+			var _messagePort = null;
+
+			function _messagePort_message(e) {
+				var data = e.data;
+				var eventName = data.eventName || "";
+				var targetId = data.targetId || "";
+				var params = data.params || {};
+				_this.raise("Event", "message."+eventName, params);
+			};
+
+			_this.screen.on("message.connect", function(e) {
+				var data = e.data;
+				var targetId = data.targetId;
+				if (targetId === _id) {
+					_messagePort = data.port;
+					if (_messagePort) {
+						_messagePort.addEventListener("message", _messagePort_message);
+						_messagePort.start();
+					}
+					e.stopPropagation();
+				}
+			});
+
+			_this.screen.on("message.disconnect", function(e) {
+				var data = e.data;
+				var targetId = data.targetId;
+				if (targetId === _id) {
+					_messagePort = data.port;
+					if (_messagePort) {
+						_messagePort.close();
+						_message = null;
+					}
+					e.stopPropagation();
+				}
+			});
+
 			_this.initialize = function initialize() {
 				_base.initialize();
 				//
-				screen.addMessageHandler(_this.data("id"), function(eventName, params) {
-					_this.raise("Event", "message."+eventName, params);
-				});
 			};
 
 			_this.change = function(url, params) {
+				if (typeof(params) === "object") {
+					params['_name'] = _id;
+				}
+				else {
+					params = { "_name": _id };
+				}
 				var queryString = formatData(params);
 				_this.attr("src", url+(!queryString ? "" : "?"+queryString));
 			};
 
-			_this.message = function message(eventName, params) {
-				if (_this.target.contentWindow.postMessage) {
-					_this.target.contentWindow.postMessage({ eventName: eventName, params: params || {} }, _this.target.contentWindow.origin);
+			_this.message = function message(eventName, params, transfar) {
+				if (_messagePort) {
+					_messagePort.postMessage({ eventName: eventName, targetId: window.name, params: params }, transfar);
 				}
-				return this;
+				return _this;
 			};
-
-			_this.on("load", function(e) {
-				_this.message("connect", { windowId: _this.data("id") });
-			});
 		});
 
 		ns.Dialog = classdef(ns.Panel, function Dialog(screen, tag) {
@@ -768,35 +738,70 @@
 			var _this = this;
 		});
 
-		ns.Screen = classdef(ns.Panel, function Screen() {
+		ns.Screen = classdef(ns.Panel, function Screen(_settings) {
 			ns.Panel.call(this, this, document.body);
 
 			var _base = this.base();
 			var _this = this;
 
-			var _windowId = null;
+			var _window_name = window.name || WSI.queries["_name"] || "";
+
+			//上位のウインドウへのメッセージポート
+			var _messageChannel = null;
+			var _messagePort = null;
+
+			//下位のウインドウとのメッセージポート
+			var _childsMessagePorts = [];
+
 			var _messageHandler = {};
 
-			var w = (window.self===window.parent ? window.self : window.parent);
-			w.addEventListener("message", function(e) {
+			function _messagePort_message(e) {
 				var data = e.data;
 				var eventName = data.eventName || "";
-				var windowId = data.windowId || "";
+				var targetId = data.targetId || "";
+				var params = data.params || {};
+				_this.raise("Event", "message."+eventName, params);
+			};
+
+			window.addEventListener("message", function(e) {
+				var data = e.data;
+				var eventName = data.eventName || "";
+				var targetId = data.targetId || "";
 				var params = data.params || {};
 
 				if (eventName === "connect") {
-					_windowId = windowId;
+					_this.raise("Event", "message.connect", { targetId: targetId, port: (0 < e.ports.length ? e.ports[0] : null) });
 				}
-				else if (!windowId) {
-					_this.raise("message."+eventName, params);
-				}
-				else {
-					if (typeof(_messageHandler[windowId]) === "function") {
-						var handler = _messageHandler[windowId];
-						handler(eventName, params);
-					}
+				else if (eventName === "disconnect") {
+					_this.raise("Event", "message.disconnect", { targetId: targetId });
 				}
 			});
+
+			window.addEventListener("unload", function(e) {
+				if (window.parent !== window.self && _window_name) {
+					if (_messagePort) {
+						_messagePort.close();
+						_messagePort = null;
+					}
+
+					window.parent.postMessage({ "eventName":"disconnect", "targetId":_window_name }, window.parent.origin);
+				}
+			});
+
+			_this.initialize = function initialize() {
+				_base.initialize();
+
+				if (window.parent !== window.self && _window_name) {
+					if (window.MessageChannel) {
+						_messageChannel = new MessageChannel();
+						_messagePort = _messageChannel.port1;
+						_messagePort.addEventListener("message", _messagePort_message);
+						_messagePort.start();
+
+						window.parent.postMessage({ "eventName":"connect", "targetId":_window_name }, window.parent.origin, [ _messageChannel.port2 ]);
+					}
+				}
+			};
 
 			_this.forward = function forward(url, params) {
 				var queryString = formatData(params);
@@ -809,30 +814,13 @@
 				return _this;
 			};
 
-			_this.message = function message(eventName, params) {
-				if (window.parent !== window.self) {
-					if (window.parent.postMessage) {
-						window.parent.postMessage({ eventName: eventName, windowId: _windowId, params: params }, w.origin);
-					}
-					return _this;
+			_this.message = function message(eventName, params, transfar) {
+				if (_messagePort) {
+					_messagePort.postMessage({ eventName: eventName, targetId: window.name, params: params }, transfar);
 				}
-				return false;
-			};
-
-			_this.addMessageHandler = function addMessageHandler(id, handler) {
-				if (typeof(handler) === "function") {
-					_messageHandler[id] = handler;
-				}
-				return _this;
-			};
-
-			_this.removeMessageHandler = function removeMessageHandler(id) {
-				_messageHandler[id] = null;
 				return _this;
 			};
 		});
-
-		ns.Message = Message;
 
 		ns.run = function run(initializer) {
 			if (!WSI.screen && typeof(initializer) === "function") {
@@ -846,7 +834,30 @@
 		};
 
 		ns.screendef = function screendef(ctor, params, baseCtor) {
-			var screenCtor = WSI.classdef(baseCtor || WSI.Screen, ctor);
+			if (typeof(ctor) !== "function") {
+				console.log("Unknown screen constructor function.");
+				return;
+			}
+			if (typeof(params) === "function" && !baseCtor) {
+				baseCtor = params;
+				params = {};
+			}
+			else if (!params && typeof(baseCtor) === "function") {
+				params = {};
+			}
+			else if (typeof(params) === "object" && !baseCtor) {
+				baseCtor = WSI.Screen;
+			}
+			else if (!params && !baseCtor) {
+				params = {};
+				baseCtor = WSI.Screen;
+			}
+			else {
+				console.log("Illegal arguments for screen constructor.");
+				return;
+			}
+
+			var screenCtor = WSI.classdef(baseCtor, ctor);
 			WSI.run(function() {
 				return (typeof(params)==="undefined" ? new screenCtor() : new screenCtor(params));
 			});
@@ -916,8 +927,6 @@
 				return null;
 			}
 		};
-
-		ns.mapping = mapping;
 
 		ns.findClass = findClass;
 	});
