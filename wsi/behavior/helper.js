@@ -803,9 +803,19 @@
 				}
 			};
 
+			_this.reload = function reload(force) {
+				location.reload(typeof(force)==="undefined" ? true : force);
+			};
+
+			_this.replace = function replace(url, params) {
+				var queryString = formatData(params);
+				location.replace(url + (!queryString ? "" : "?"+queryString));
+				return _this;
+			};
+
 			_this.forward = function forward(url, params) {
 				var queryString = formatData(params);
-				document.location.href = url + (!queryString ? "" : "?"+queryString);
+				location.assign(url + (!queryString ? "" : "?"+queryString));
 				return _this;
 			};
 

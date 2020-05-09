@@ -9,6 +9,7 @@ require_once 'Plugin.php';
 require_once 'Resource.php';
 require_once 'Request.php';
 require_once 'Status.php';
+require_once 'RedirectStatus.php';
 require_once 'Processer.php';
 require_once 'Asset.php';
 require_once 'Response.php';

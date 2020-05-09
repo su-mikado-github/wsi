@@ -38,9 +38,18 @@ WSI.screendef(function Top() {
 //		_this.controls.goUserList.classList().add("active");
 	}
 
+	function goLogout_click(e) {
+		WSI.method("<?=url('/system/top.json') ?>", null, null, function(result) {
+			_this.reload();
+		});
+	}
+
 	_this.initialize = function initialize() {
 		_base.initialize();
 		//
+
+		_this.controls.goLogout.click(goLogout_click);
+
 		_this.controls.frmContents.on("message.useredit", frmContents_message_useredit);
 
 		_this.controls.dlgMain.on("saved", dlgMain_saved);

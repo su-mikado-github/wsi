@@ -21,34 +21,24 @@ WSI.namespace("system", function(ns) {
 		var _modal = null;
 		var _body = null;
 
-//		var _message = null;
-
-//		_this.mapping();
-
 		_this.initialize = function initialize() {
 			_base.initialize();
 
 			_modal = _this.find(".modal-dialog");
 			_body = _this.controls[_id+"_body"];
 
-//			_message = new WSI.Message(_bodyWindow, _bodyWindow.location.protocol+"//"+_bodyWindow.location.hostname);
-//
 			_title = _this.controls[_id+"_label"];
 			_close = _this.controls[_id+"_close"].click(function(e) {
 				_body.message("close");
-//				_message.raise("close");
 			});
 			_cancel = _this.controls[_id+"_cancel"].click(function(e) {
 				_body.message("cancel");
-//				_message.raise("cancel");
 			});
 			_save = _this.controls[_id+"_save"].click(function(e) {
 				_body.message("save");
-//				_message.raise("save");
 			});
 			_commit = _this.controls[_id+"_commit"].click(function(e) {
 				_body.message("commit");
-//				_message.raise("commit");
 			});
 
 			_body.on("message.ready", function(e) {
@@ -70,28 +60,6 @@ WSI.namespace("system", function(ns) {
 			_body.on("message.commited", function(e) {
 				$("#"+_id).modal("hide");
 			});
-
-
-
-//			_body.on("load", function(data) {
-//				$("#"+_id).modal("show");
-//			});
-
-//			_message.on("closed", function(data) {
-//				$("#"+_id).modal("hide");
-//			});
-//
-//			_message.on("canceled", function(data) {
-//				$("#"+_id).modal("hide");
-//			});
-//
-//			_message.on("saved", function(data) {
-//				$("#"+_id).modal("hide");
-//			});
-//
-//			_message.on("commited", function(data) {
-//				$("#"+_id).modal("hide");
-//			});
 		};
 
 		_this.show = function show(title, widthType, height, buttons, url, params) {
