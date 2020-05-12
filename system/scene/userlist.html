@@ -1,5 +1,17 @@
 <?=Utils::template('/system/contents.html', ['title'=>'システム設定', 'script_id'=>'/system/userlist.js', 'menu'=>'userlist'], function() { ?>
-<table data-id="tblUserlist" class="table table-bordered table-hover table-sm">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col d-flex p-1">
+      <button data-id="btnCreateUser" type="button" class="btn btn-success align-items-end">新規登録</button>
+    </div>
+    <div class="col d-flex flex-row-reverse p-1">
+      <div class="border border-dark rounded-circle d-flex justify-content-center" style="width:46px;height:46px;">
+        <img data-id="btnSetting" src="<?=url('/system/setting.png') ?>" class="align-self-center" style="width:28px;height:28px; m-auto">
+      </div>
+    </div>
+  </div>
+</div>
+<table data-id="tblUserlist" class="table table-bordered table-striped table-hover table-sm">
 <thead class="thead-dark">
 <tr>
   <th>ID</th>
@@ -10,7 +22,7 @@
   <th>削除</th>
 </tr>
 </thead>
-<tbody>
+<tbody style="overflow-y: auto;">
 </tbody>
 </table>
 <?php }); ?>

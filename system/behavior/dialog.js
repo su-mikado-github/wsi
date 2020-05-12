@@ -116,7 +116,12 @@ WSI.namespace("system", function(ns) {
 				_commit.classList().remove("d-none");
 			}
 
-			_body.change(url, params);
+			if (!url) {
+				$("#"+_id).modal("show");
+			}
+			else {
+				_body.change(url, params);
+			}
 		};
 
 		_this.hide = function hide() {

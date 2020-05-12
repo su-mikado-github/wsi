@@ -622,6 +622,122 @@
 			};
 		});
 
+		ns.Button = classdef(ns.Control, function Button(screen, tag) {
+			ns.Control.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+
+			_this.disabled = function disabled(value) {
+				if (typeof(value) === "undefined") {
+					return _this.target.disabled;
+				}
+				else {
+					_this.target.disabled = value;
+					return _this;
+				}
+			};
+		});
+
+		ns.InputControl = classdef(ns.Control, function InputControl(screen, tag) {
+			ns.Control.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+
+			_this.readonly = function readonly(value) {
+				if (typeof(value) === "undefined") {
+					return _this.target.readonly;
+				}
+				else {
+					_this.target.readonly = value;
+					return _this;
+				}
+			};
+
+			_this.disabled = function disabled(value) {
+				if (typeof(value) === "undefined") {
+					return _this.target.disabled;
+				}
+				else {
+					_this.target.disabled = value;
+					return _this;
+				}
+			};
+		});
+
+		ns.TextBox = classdef(ns.InputControl, function TextBox(screen, tag) {
+			ns.InputControl.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+		});
+
+		ns.PasswordBox = classdef(ns.TextBox, function PasswordBox(screen, tag) {
+			ns.TextBox.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+		});
+
+		ns.CheckBox = classdef(ns.InputControl, function CheckBox(screen, tag) {
+			ns.InputControl.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+
+			_this.checked = function checked(value) {
+				if (typeof(value) === "undefined") {
+					return _this.target.checked;
+				}
+				else {
+					_this.target.checked = value;
+					return _this;
+				}
+			};
+		});
+
+		ns.RadioButton = classdef(ns.InputControl, function RadioButton(screen, tag) {
+			ns.InputControl.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+
+			_this.checked = function checked(value) {
+				if (typeof(value) === "undefined") {
+					return _this.target.checked;
+				}
+				else {
+					_this.target.checked = value;
+					return _this;
+				}
+			};
+		});
+
+		ns.SelectBox = classdef(ns.InputControl, function SelectBox(screen, tag) {
+			ns.InputControl.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+
+			_this.initialize = function initialize() {
+				_base.initialize();
+				//
+			};
+
+			_this.option = function option(key, label) {
+				_this.append(WSI.tag("option").value(key).html(label));
+				return _this;
+			};
+		});
+
+		ns.MultiSelectBox = classdef(ns.SelectBox, function MultiSelectBox(screen, tag) {
+			ns.SelectBox.call(this, screen, tag);
+
+			var _base = this.base();
+			var _this = this;
+		});
+
 		ns.Panel = classdef(ns.Control, function Panel(screen, tag) {
 			ns.Control.call(this, screen, tag);
 
@@ -636,7 +752,33 @@
 					var node = nodeList[i];
 					if (_this.target !== node) {
 						var id = node.dataset.id;
-						var ctorName = node.dataset.type || "WSI.Control";
+
+						var ctorName = "WSI.Control";
+						if (node.tagName.toUpperCase() === "INPUT") {
+							if (!node.type || node.type.toUpperCase()==="TEXT") {
+								ctorName = "WSI.TextBox";
+							}
+							else if (node.type.toUpperCase()==="PASSWORD") {
+								ctorName = "WSI.PasswordBox";
+							}
+							else if (node.type.toUpperCase()==="checkbox") {
+								ctorName = "WSI.CheckBox";
+							}
+							else if (node.type.toUpperCase()==="radio") {
+								ctorName = "WSI.RadioButton";
+							}
+							else if (node.type.toUpperCase()==="button" || node.type.toUpperCase()==="submit" || node.type.toUpperCase()==="reset") {
+								ctorName = "WSI.Button";
+							}
+						}
+						else if (node.tagName.toUpperCase() === "SELECT") {
+							ctorName = (!node.multiple ? "WSI.SelectBox" : "WSI.MultiSelectBox");
+						}
+						else if (node.tagName.toUpperCase() === "BUTTON") {
+							ctorName = "WSI.Button";
+						}
+
+						var ctorName = node.dataset.type || ctorName;
 
 						var ctor = findClass(ctorName);
 						if (!ctor) {

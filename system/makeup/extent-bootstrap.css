@@ -1,0 +1,15 @@
+@charset "UTF-8";
+
+.tooltip.custom
+{
+	background-color: white; /*rgba(1.0, 1.0, 0.8, 0.5)*/;
+}
+
+.tooltip.custom > .tooltip-inner
+{
+	background-color: rgba(255, 255, 225, 0.5);
+	color: black;
+	border: 1px solid black;
+	white-space: pre-nowrap;
+	max-width: 400px;
+}

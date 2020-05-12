@@ -44,5 +44,13 @@ WSI.screendef(function Userlist() {
 				_this.message("useredit", { user_id: user_id });
 			}
 		});
+
+		_this.controls.btnCreateUser.click(function(e) {
+			_this.message("usercreate");
+		});
+
+		_this.controls.btnSetting.click(function(e) {
+			_this.message("usersetting");
+		});
 	};
 });

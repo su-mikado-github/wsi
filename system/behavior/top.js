@@ -17,11 +17,13 @@ WSI.screendef(function Top() {
 	}
 
 	function frmContents_message_useredit(e) {
-		_this.controls.dlgMain.show("ユーザー編集", system.Dialog.WidthTypes.EXTRA_LARGE, 640, [ system.Dialog.Buttons.CLOSE, system.Dialog.Buttons.SAVE ], "<?=url('/system/useredit.html') ?>", e.data);
+		_this.controls.dlgMain.show("ユーザー編集", system.Dialog.WidthTypes.EXTRA_LARGE, 640, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "<?=url('/system/useredit.html') ?>", e.data);
 	}
 
 	function dlgMain_saved(params) {
 		_this.controls.dlgMain.hide();
+
+		_this.controls.goUserList.click();
 	}
 
 	function goUserList_click(e) {
@@ -31,11 +33,12 @@ WSI.screendef(function Top() {
 //		_this.controls.goUserList.classList().add("active");
 	}
 
-	function btnDummyMenu1_click(e) {
-		_this.controls.frmContents.change("<?=url('/system/userlist.html') ?>", { container_id: "<?=$_GET['container_id'] ?>" });
-		aciveMenu(_this.controls.btnDummyMenu1, _this.controls.mnuLeft);
-//		_this.controls.mnuLeft.finds("a.active").forEach(function(m) { m.classList().remove("active"); });
-//		_this.controls.goUserList.classList().add("active");
+	function frmContents_message_usercreate(e) {
+		_this.controls.dlgMain.show("ユーザー登録", system.Dialog.WidthTypes.EXTRA_LARGE, 640, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "<?=url('/system/useredit.html') ?>");
+	}
+
+	function frmContents_message_usersetting(e) {
+		_this.controls.dlgMain.show("ユーザー属性設定", system.Dialog.WidthTypes.EXTRA_LARGE, 640, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "");
 	}
 
 	function goLogout_click(e) {
@@ -55,7 +58,10 @@ WSI.screendef(function Top() {
 		_this.controls.dlgMain.on("saved", dlgMain_saved);
 
 		_this.controls.goUserList.click(goUserList_click);
-		_this.controls.btnDummyMenu1.click(btnDummyMenu1_click);
+
+		_this.controls.frmContents.on("message.usercreate", frmContents_message_usercreate);
+
+		_this.controls.frmContents.on("message.usersetting", frmContents_message_usersetting);
 
 		_this.controls.goUserList.click();
 	};

@@ -1,3 +1,20 @@
-<?=Utils::template('/system/screen.html', ['title'=>'ユーザー編集', 'script_id'=>'/system/useredit.js'], function() { ?>
-<h1>Hello world !!</h1>
+<?=Utils::template('/system/sub_screen.html', ['title'=>'', 'script_id'=>'/system/useredit.js'], function() use($status) { ?>
+<form>
+<div class="form-group row mx-0">
+  <label for="txtLoginId" class="col-sm-1 col-form-label text-primary">ID</label>
+  <div class="col-sm-4">
+    <input data-id="txtLoginId" type="text" class="form-control" id="txtLoginId" value="" required autocomplete="off" data-toggle="tooltip" data-placement="auto" title="半角英数かハイフン（-）か下線（_）の組み合わせで8桁以上">
+  </div>
+</div>
+<div class="form-group row mx-0">
+  <label for="txtPassword" class="col-sm-1 col-form-label text-primary">PW</label>
+  <div class="col-sm-3">
+    <input data-id="txtPassword" type="password" class="form-control" id="txtPassword" value="" required autocomplete="off" data-toggle="tooltip" data-placement="auto" title="半角英数か半角記号の組み合わせで8桁以上">
+  </div>
+  <label for="txtPasswordConfirm" class="col-sm-2 col-form-label text-right text-primary">（確認用）</label>
+  <div class="col-sm-3">
+    <input data-id="txtPasswordConfirm" type="password" class="form-control" id="txtPasswordConfirm" value="" required autocomplete="off" autocomplete="off" data-toggle="tooltip" data-placement="auto" title="半角英数か半角記号の組み合わせで8桁以上">
+  </div>
+</div>
+</form>
 <?php }) ?>
