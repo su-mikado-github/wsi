@@ -1,0 +1,2 @@
+delete
+from m_user_attribute_types

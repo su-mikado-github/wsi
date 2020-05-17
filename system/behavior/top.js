@@ -17,7 +17,7 @@ WSI.screendef(function Top() {
 	}
 
 	function frmContents_message_useredit(e) {
-		_this.controls.dlgMain.show("ユーザー編集", system.Dialog.WidthTypes.EXTRA_LARGE, 640, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "<?=url('/system/useredit.html') ?>", e.data);
+		_this.controls.dlgMain.show("ユーザー編集", system.Dialog.WidthTypes.EXTRA_LARGE, "640px", [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "<?=url('/system/useredit.html') ?>", e.data);
 	}
 
 	function dlgMain_saved(params) {
@@ -34,11 +34,11 @@ WSI.screendef(function Top() {
 	}
 
 	function frmContents_message_usercreate(e) {
-		_this.controls.dlgMain.show("ユーザー登録", system.Dialog.WidthTypes.EXTRA_LARGE, 640, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "<?=url('/system/useredit.html') ?>");
+		_this.controls.dlgMain.show("ユーザー登録", system.Dialog.WidthTypes.EXTRA_LARGE, null, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "<?=url('/system/useredit.html') ?>");
 	}
 
 	function frmContents_message_usersetting(e) {
-		_this.controls.dlgMain.show("ユーザー属性設定", system.Dialog.WidthTypes.EXTRA_LARGE, 640, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "");
+		_this.controls.dlgMain.show("ユーザー属性設定", system.Dialog.WidthTypes.CUSTOM_90P, null, [ system.Dialog.Buttons.CANCEL, system.Dialog.Buttons.SAVE ], "<?=url('/system/setting.html') ?>");
 	}
 
 	function goLogout_click(e) {

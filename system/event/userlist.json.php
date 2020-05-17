@@ -16,7 +16,8 @@ class Userlist extends DispatchHandler {
         //
         $db = Database::connect();
 
-        $sql = Resource::from('/system/m_users/select/all.sql')->load();
+//        $sql = Resource::from('/system/m_users/select/all.sql')->load($db->protocol);
+        $sql = Resource::from('/system/m_users/select/all.sql');
         $users = $db->rowset($sql);
 
         return Status::ok()->set_params(['users'=>$users]);

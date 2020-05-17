@@ -24,8 +24,7 @@ class Login extends DispatchHandler {
     public function gologin(Request $request) {
         $db = Database::connect();
 
-        $sql = $this->users->load($_POST);
-        $user = $db->row($sql, [ 'login_id'=>$_POST['loginId'], 'password'=>$_POST['loginPw'] ]);
+        $user = $db->row($this->users, [ 'login_id'=>$_POST['loginId'], 'password'=>$_POST['loginPw'] ]);
         if (!$user) {
             return Status::error(-1, 'ログインIDかパスワードが間違えています。');
         }

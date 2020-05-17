@@ -57,7 +57,7 @@ class Resource {
         return $this->type;
     }
 
-    public function load(array $params=[]) {
+    public function load($pattern=null, array $params=[]) {
         $core = $this->get_core();
 
         $id = $this->get_id();
@@ -68,9 +68,19 @@ class Resource {
 
         $resource_dir = @$resource_dirs[$type];
 
-        $sub_path = $resource_dir . substr($id, strlen($group));
+        $pattern_dir = ($pattern ? '/' . $pattern : '');
 
-        $path = $core->publish_path . $this->group . $sub_path;
+        $sub_path = substr($id, strlen($group));
+
+        //Publishディレクトリ配下（パターン別）
+        $path = $core->publish_path . $this->group . $resource_dir . $pattern_dir . $sub_path;
+        if (file_exists($path)) {
+            return $this->load_resource($id, $path, $params);
+        }
+        Logger::warn("Not found resource '{$id}' => {$path}");
+
+        //Publishディレクトリ配下（パターン＝デフォルト）
+        $path = $core->publish_path . $this->group . $resource_dir . $sub_path;
         if (file_exists($path)) {
             return $this->load_resource($id, $path, $params);
         }
@@ -78,7 +88,15 @@ class Resource {
 
         $group_path = $core->get_group_path($group);
         if ($group_path) {
-            $path = $group_path . $sub_path;
+            //Groupディレクトリ配下（パターン別）
+            $path = $group_path . $resource_dir . $pattern_dir . $sub_path;
+            if (file_exists($path)) {
+                return $this->load_resource($id, $path, $params);
+            }
+            Logger::warn("Not found resource '{$id}' => {$path}");
+
+            //Groupディレクトリ配下（パターン＝デフォルト）
+            $path = $group_path . $resource_dir . $sub_path;
             if (file_exists($path)) {
                 return $this->load_resource($id, $path, $params);
             }

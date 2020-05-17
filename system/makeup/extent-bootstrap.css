@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+<?php function extendBootstrup($max_width) { ?>
+<?php if(isset($max_width)) { ?>@media screen and (min-width: <?=$max_width ?>px) {<?php } ?>
 .tooltip.custom
 {
 	background-color: white; /*rgba(1.0, 1.0, 0.8, 0.5)*/;
@@ -13,3 +15,48 @@
 	white-space: pre-nowrap;
 	max-width: 400px;
 }
+
+.modal-dialog.modal-custom-50p
+{
+	max-width: 50%;
+}
+
+.modal-dialog.modal-custom-60p
+{
+	max-width: 60%;
+}
+
+.modal-dialog.modal-custom-70p
+{
+	max-width: 70%;
+}
+
+.modal-dialog.modal-custom-80p
+{
+	max-width: 80%;
+}
+
+.modal-dialog.modal-custom-90p
+{
+	max-width: 90%;
+}
+<?php if(isset($max_width)) { ?>}<?php } ?>
+
+<?php
+}
+
+// Small devices (landscape phones, 576px and up)
+extendBootstrup(576);
+
+// Medium devices (tablets, 768px and up)
+extendBootstrup(768);
+
+// Large devices (desktops, 992px and up)
+extendBootstrup(992);
+
+// Extra large devices (large desktops, 1200px and up)
+extendBootstrup(1200);
+
+extendBootstrup();
+
+?>

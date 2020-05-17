@@ -1,8 +1,10 @@
 <?php
-//require_once '../wsi/WSI/Core.php';
-//require_once '../wsi/WSI/DB/MysqlDatabaseConnection.php';
-require_once 'phar://wsi.phar/WSI/Core.php';
-require_once 'phar://wsi.phar/WSI/DB/MysqlDatabaseConnection.php';
+require_once '../wsi/WSI/Core.php';
+require_once '../wsi/WSI/DB/MysqlDatabaseConnection.php';
+//require_once 'phar://wsi.phar/WSI/Core.php';
+//require_once 'phar://wsi.phar/WSI/DB/MysqlDatabaseConnection.php';
+
+require_once 'MinifierJavaScriptResponse.php';
 
 use WSI\Asset;
 use WSI\Core;
@@ -41,6 +43,7 @@ Core::instance()
     ->set_assets([
         '.html' => Asset::define('/scene', 'WSI\HtmlResponse', 'text/html; charset=UTF-8'),
         '.js' => Asset::define('/behavior', 'WSI\JavaScriptResponse', 'text/javascript; charset=UTF-8'),
+//        '.js' => Asset::define('/behavior', 'Samples\MinifierJavaScriptResponse', 'text/javascript; charset=UTF-8'),
         '.css' => Asset::define('/makeup', 'WSI\CssResponse', 'text/css; charset=UTF-8'),
         '.map' => Asset::define('/maps', 'WSI\TextResponse', 'text/plain; charset=UTF-8'),
         '.json' => Asset::define('/event', 'WSI\JsonResponse', 'application/json; charset=UTF-8'),

@@ -282,17 +282,22 @@
 		}
 
 		function setAttr(name, v) {
-			if (typeof(v) === "function") {
-				_tag.setAttribute(name, v());
-			}
-			else if (v === true) {
-				_tag.setAttriuteNode(document.createAttribute(name));
-			}
-			else if (v === false) {
-				_tag.removeAttriute(name);
+			if (typeof(_tag[name]) !== "undefined") {
+				_tag[name] = v;
 			}
 			else {
-				_tag.setAttribute(name, v);
+				if (typeof(v) === "function") {
+					_tag.attributes[name].value = v();
+				}
+				else if (v === true) {
+					_tag.attributes[name] = document.createAttribute(name);
+				}
+				else if (v === false) {
+					_tag.attributes.removeNamedItem(name);
+				}
+				else {
+					_tag.attributes[name].value = v;
+				}
 			}
 		}
 
@@ -373,7 +378,7 @@
 		};
 
 		_this.finds = function finds(selector) {
-			var tags = document.querySelectorAll(selector);
+			var tags = _tag.querySelectorAll(selector);
 			return new TagList(tags);
 		};
 
@@ -445,12 +450,34 @@
 		};
 
 		_this.append = function append(v, condition) {
-			if (condition !== false) {
+			if (condition !== false && v !== null) {
 				if (v instanceof Tag) {
 					_tag.appendChild(v.target);
 				}
+				else if (v instanceof Array) {
+					for (var i in v) {
+						_this.append(v[i]);
+					}
+				}
 				else if (typeof(v) === "object" && typeof(v.tagName) === "string") {
 					_tag.appendChild(v);
+				}
+			}
+			return _this;
+		};
+
+		_this.remove = function remove(v, condition) {
+			if (condition !== false && v !== null) {
+				if (v instanceof Tag) {
+					_tag.removeChild(v.target);
+				}
+				else if (v instanceof Array) {
+					for (var i in v) {
+						_this.remove(v[i]);
+					}
+				}
+				else if (typeof(v) === "object" && typeof(v.tagName) === "string") {
+					_tag.removeChild(v);
 				}
 			}
 			return _this;
@@ -526,6 +553,8 @@
 			return _tag.classList;
 		};
 
+
+
 		_this.data = function data(name, v) {
 			if (typeof(v) === "undefined") {
 				return (typeof(_tag.dataset[name])==="undefined" ? null : _tag.dataset[name]);
@@ -539,6 +568,48 @@
 				}
 				return _this;
 			}
+		};
+
+		_this.styleClass = function styleClass(className, condition) {
+			if (condition !== false) {
+				var cl = _tag.classList;
+				if (typeof(className) === "undefined") {
+					var result = [];
+					for (var i in cl) {
+						result.push(cl.item(i));
+					}
+					return result;
+				}
+				else if (typeof(className) === "object") {
+					if (typeof(className.remove) === "string") {
+						var classNames = className.remove.split(" ");
+						for (var j1 in classNames) {
+							cl.remove(classNames[j1]);
+						}
+					}
+					else if (className.remove instanceof Array) {
+						for (var j2 in className.remove) {
+							cl.remove(className.remove[j2]);
+						}
+					}
+
+					if (typeof(className.add) === "string") {
+						var classNames = className.add.split(" ");
+						for (var k1 in classNames) {
+							cl.add(classNames[k1]);
+						}
+					}
+					else if (className.add instanceof Array) {
+						for (var k2 in className.add) {
+							cl.add(className.add[k2]);
+						}
+					}
+				}
+				else if (typeof(className) === "string") {
+					_tag.className = className;
+				}
+			}
+			return _this;
 		};
 
 		_this.style = function style(name, v) {
@@ -761,13 +832,13 @@
 							else if (node.type.toUpperCase()==="PASSWORD") {
 								ctorName = "WSI.PasswordBox";
 							}
-							else if (node.type.toUpperCase()==="checkbox") {
+							else if (node.type.toUpperCase()==="CHECKBOX") {
 								ctorName = "WSI.CheckBox";
 							}
-							else if (node.type.toUpperCase()==="radio") {
+							else if (node.type.toUpperCase()==="RADIO") {
 								ctorName = "WSI.RadioButton";
 							}
-							else if (node.type.toUpperCase()==="button" || node.type.toUpperCase()==="submit" || node.type.toUpperCase()==="reset") {
+							else if (node.type.toUpperCase()==="BUTTON" || node.type.toUpperCase()==="SUBMIT" || node.type.toUpperCase()==="RESET") {
 								ctorName = "WSI.Button";
 							}
 						}

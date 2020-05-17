@@ -66,21 +66,41 @@ WSI.namespace("system", function(ns) {
 			_title.text(title);
 			switch (widthType || Dialog.WidthTypes.DEFAULT) {
 			case Dialog.WidthTypes.SMALL:
-				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl");
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
 				_modal.classList().add("modal-sm");
 				break;
 			case Dialog.WidthTypes.LARGE:
-				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl");
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
 				_modal.classList().add("modal-lg");
 				break;
 			case Dialog.WidthTypes.EXTRA_LARGE:
-				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl");
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
 				_modal.classList().add("modal-xl");
 				break;
+			case Dialog.WidthTypes.CUSTOM_50P:
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
+				_modal.classList().add("modal-custom-50p");
+				break;
+			case Dialog.WidthTypes.CUSTOM_60P:
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
+				_modal.classList().add("modal-custom-60p");
+				break;
+			case Dialog.WidthTypes.CUSTOM_70P:
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
+				_modal.classList().add("modal-custom-70p");
+				break;
+			case Dialog.WidthTypes.CUSTOM_80P:
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
+				_modal.classList().add("modal-custom-80p");
+				break;
+			case Dialog.WidthTypes.CUSTOM_90P:
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
+				_modal.classList().add("modal-custom-90p");
+				break;
 			default:
-				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl");
+				_modal.classList().remove("modal-sm", "modal-lg", "modal-xl", "modal-custom-50p", "modal-custom-60p", "modal-custom-70p", "modal-custom-80p", "modal-custom-90p");
 			}
-			_body.parent().style("height", (height || 480)+"px");
+			_body.parent().style("height", (height || "90%"));
 
 			_close.classList().add("d-none");
 			_cancel.classList().add("d-none");
@@ -117,6 +137,7 @@ WSI.namespace("system", function(ns) {
 			}
 
 			if (!url) {
+				_body.attr("src", "_blank");
 				$("#"+_id).modal("show");
 			}
 			else {
@@ -134,6 +155,11 @@ WSI.namespace("system", function(ns) {
 		SMALL: 1,
 		LARGE: 2,
 		EXTRA_LARGE: 3,
+		CUSTOM_50P: 50,
+		CUSTOM_60P: 60,
+		CUSTOM_70P: 70,
+		CUSTOM_80P: 80,
+		CUSTOM_90P: 90,
 	}
 
 	ns.Dialog.Buttons = {

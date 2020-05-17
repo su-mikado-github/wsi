@@ -24,6 +24,7 @@ require_once 'DatabaseConnector.php';
 require_once 'DatabaseConnection.php';
 require_once 'Container.php';
 
+require_once 'Enum.php';
 require_once 'Utils.php';
 
 $include_path = get_include_path();
