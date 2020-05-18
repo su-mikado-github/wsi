@@ -7,6 +7,8 @@ WSI.screendef(function Userlist() {
 	var _base = this.base();
 	var _this = this;
 
+	var ETypes = system.ETypes;
+
 	var _attribute_types = [];
 
 //	_this.mapping();
@@ -16,36 +18,68 @@ WSI.screendef(function Userlist() {
 
 	var _attributeTypeMap = {};
 
+	var _division1 = null;
+	var _division2 = null;
+	var _division3 = null;
+
 	var _editing = null;
 
-//	function buildSelectDataType(division, divisionValues, type_no) {
-//		var result = WSI.tag("select")
-//			.styleClass("form-control")
-//		for (var i in divisionValues) {
-//			var divisionValue = divisionValues[i];
-//			result.append(
-//				WSI.tag("option").attr("selected", (divisionValue.division_int_value==type_no)).data("division_value_id", divisionValue.division_value_id).value(divisionValue.division_int_value).text(divisionValue.division_value_name)
-//			);
-//		}
-//		return result;
-//	}
+	function selectDivision1Type(division1) {
+		_this.controls.txtDefaultDivision1Value.clear();
+		_this.controls.txtDefaultDivision2Value.clear();
+		_this.controls.txtDefaultDivision3Value.clear();
+		division1.forEach(function(item, index) {
+			_this.controls.txtDefaultDivision1Value.append(
+				WSI.tag("option").value(item.division_id).text(item.division_name)
+			);
+		});
+	}
+
+	function selectDivision2Type(division2) {
+		_this.controls.txtDefaultDivision1Value.clear();
+		_this.controls.txtDefaultDivision2Value.clear();
+		_this.controls.txtDefaultDivision3Value.clear();
+	}
+
+	function selectDivision3Type(division3) {
+		_this.controls.txtDefaultDivision1Value.clear();
+		_this.controls.txtDefaultDivision2Value.clear();
+		_this.controls.txtDefaultDivision3Value.clear();
+	}
+
+	function changeAttributeType(type_no) {
+		_this.controls.txtDefaultStringValue.styleClass(type_no==ETypes.String ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultTextValue.styleClass(type_no==ETypes.Text ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultIntValue.styleClass(type_no==ETypes.Integer ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultDoubleValue.styleClass(type_no==ETypes.Double ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultDateValue.styleClass(type_no==ETypes.Date || type_no==ETypes.DateTime ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultTimeValue.styleClass(type_no==ETypes.Time || type_no==ETypes.DateTime ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultFlagValue.styleClass(type_no==ETypes.Flag ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultDivision1Value.styleClass(type_no==ETypes.Division1 || type_no==ETypes.Division2 || type_no==ETypes.Division3 ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultDivision2Value.styleClass(type_no==ETypes.Division2 || type_no==ETypes.Division3 ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultDivision3Value.styleClass(type_no==ETypes.Division3 ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+
+		if (type_no == ETypes.Division1) {
+			selectDivision1Type(_division1);
+		}
+		else if (type_no == ETypes.Division2) {
+			selectDivision2Type(_division2);
+		}
+		else if (type_no == ETypes.Division3) {
+			selectDivision3Type(_division3);
+		}
+	}
 
 	function buildSelectDataType(control, division, divisionValues, type_no) {
 		control.clear();
 		for (var i in divisionValues) {
 			var divisionValue = divisionValues[i];
 			control.append(
-				WSI.tag("option").attr("selected", (divisionValue.division_int_value==type_no)).data("division_value_id", divisionValue.division_value_id).value(divisionValue.division_int_value).text(divisionValue.division_value_name)
+				WSI.tag("option").data("division_value_id", divisionValue.division_value_id).value(divisionValue.division_int_value).text(divisionValue.division_value_name)
 			);
 		}
 		return control;
 	}
-
-//	function buildValue(type, value) {
-//		switch (type) {
-//		case:
-//		}
-//	}
 
 	function btnUp_click(e) {
 		console.log("up");
@@ -84,7 +118,26 @@ WSI.screendef(function Userlist() {
 			.data("row_index", row.index)
 			.append(WSI.tag("td").data("name", "name").styleClass("align-middle").text(row.name))
 			.append(WSI.tag("td").data("name", "type").styleClass("align-middle").data("division_value_id", _attributeTypeMap[row.type_no].division_value_id).text(_attributeTypeMap[row.type_no].division_value_name))
-			.append(WSI.tag("td").data("name", "value").styleClass("align-middle").text(row.value))
+			.append(WSI.tag("td").data("name", "value").styleClass("align-middle").text(function() {
+				var result = "";
+				if (row.value) {
+					if (typeof(row.value) === "object") {
+						if (typeof(row.value.division_id)) {
+							result += row.value.division_id;
+						}
+						if (typeof(row.value.layer2_division_id)) {
+							result = result + (!result.length ? row.value.layer2_division_id : "／"+row.value.layer2_division_id);
+						}
+						if (typeof(row.value.layer3_division_id)) {
+							result = result + (!result.length ? row.value.layer3_division_id : "／"+row.value.layer3_division_id);
+						}
+					}
+					else {
+						result = row.value;
+					}
+				}
+				return result;
+			}))
 			.append(WSI.tag("td").data("name", "visible").styleClass("text-center align-middle").text(row.visibled ? "○" : "　")).data("visibled", (row.visibled ? 1 : 0))
 			.append(WSI.tag("td").append(
 				WSI.tag("div").styleClass("form-group row m-0 p-0").append([
@@ -104,7 +157,8 @@ WSI.screendef(function Userlist() {
 
 		_this.controls.txtAttributeName.value(attributeType.name);
 		_this.controls.selAttributeType.value(attributeType.type_no);
-		_this.controls.txtDefaultValue.value(attributeType.value);
+		changeAttributeType(_this.controls.selAttributeType.value());
+//		_this.controls.txtDefaultValue.value(attributeType.value);
 		_this.controls.chkVisibled.checked(attributeType.visibled);
 
 		return tr;
@@ -129,6 +183,68 @@ WSI.screendef(function Userlist() {
 		});
 	}
 
+	function getAttributeValue(attribute) {
+		var type_no = attribute.attribute_type;
+		switch (type_no) {
+		case ETypes.String:
+			return attribute.default_string_value;
+		case ETypes.Text:
+			return attribute.default_text_value;
+		case ETypes.Integer:
+			return attribute.default_int_value;
+		case ETypes.Double:
+			return attribute.default_double_value;
+		case ETypes.Date:
+			return attribute.default_date_value;
+		case ETypes.DateTime:
+			return attribute.default_datetime_value;
+		case ETypes.Time:
+			return attribute.default_time_value;
+		case ETypes.Flag:
+			return attribute.default_flag_value;
+		case ETypes.Division1:
+			return {
+				value_id: attribute.default_value_id,
+				division_id: attribute.division_id,
+			};
+		case ETypes.Division2:
+			return {
+				value_id: attribute.default_value_id,
+				division_id: attribute.division_id,
+				layer2_division_id: attribute.layer2_division_id,
+			};
+		case ETypes.Division3:
+			return {
+				value_id: attribute.default_value_id,
+				division_id: attribute.division_id,
+				layer2_division_id: attribute.layer2_division_id,
+				layer3_division_id: attribute.layer3_division_id,
+			};
+		}
+		return null;
+	}
+
+	function clearInput() {
+
+		_this.controls.txtAttributeName.value(null);
+		_this.controls.selAttributeType.value(_division.division_int_value);
+		changeAttributeType(_this.controls.selAttributeType.value());
+		_this.controls.txtDefaultStringValue.value(null);
+		_this.controls.txtDefaultTextValue.value(null);
+		_this.controls.txtDefaultIntValue.value(null);
+		_this.controls.txtDefaultDoubleValue.value(null);
+		_this.controls.txtDefaultDateValue.value(null);
+		_this.controls.txtDefaultTimeValue.value(null);
+		_this.controls.txtDefaultFlagValue.checked(false);
+		_this.controls.txtDefaultDivision1Value.value(null);
+		_this.controls.txtDefaultDivision2Value.value(null);
+		_this.controls.txtDefaultDivision3Value.value(null);
+		_this.controls.chkVisibled.checked(true);
+
+		_this.controls.btnUpdate.styleClass({add:"invisible"});
+		_editing = null;
+	}
+
 	_this.initialize = function initialize() {
 		_base.initialize();
 
@@ -138,12 +254,17 @@ WSI.screendef(function Userlist() {
 			_division = result.params.division;
 			_divisionValues = result.params.division_values;
 
+			_division1 = result.params.division1;
+			_division2 = result.params.division2;
+			_division3 = result.params.division3;
+
 			_attributeTypeMap = {};
 			_divisionValues.forEach(function(v) {
 				_attributeTypeMap[v.division_int_value] = v;
 			});
 
-			buildSelectDataType(_this.controls.selAttributeType, _division, _divisionValues, _division.default_int_value);
+			buildSelectDataType(_this.controls.selAttributeType, _division, _divisionValues, _division.division_int_value);
+			changeAttributeType(_this.controls.selAttributeType.value());
 
 			var tbody = _this.controls.tblAttributeList.find("tbody");
 
@@ -156,26 +277,21 @@ WSI.screendef(function Userlist() {
 					id: item.attribute_type_id,
 					name: item.attribute_type_name,
 					type_no: item.attribute_type,
-					value: "",
-					delete_flag: false,
+					value: getAttributeValue(item),
+					visibled: !item.delete_flag,
 				};
-
+				tbody.append(buildRow(row));
 				_attribute_types.push(row);
-				tbody.append(
-					WSI.tag("tr")
-						.data("attribute_type_id", row.attribute_type_id)
-						.append(WSI.tag("td").append(
-								WSI.tag("input").attr("type", "checkbox").styleClass("form-control").value(row.attribute_type_id)
-						))
-						.append(WSI.tag("td").append(buildSelectDataType(_division, _divisionValues)))
-						.append(WSI.tag("td").append(
-								WSI.tag("input").attr("type", "text").styleClass("form-control")
-						))
-						.append(WSI.tag("td").append(
-								WSI.tag("input").attr("type", "checkbox").styleClass("form-control").value(row.attribute_type_id).attr("checked", row.delete_flag!==0)
-						))
-				);
+
+				normalizeList(tbody.finds("tr"));
 			}
+
+			clearInput();
+		});
+
+		_this.controls.selAttributeType.change(function(e) {
+			var type_no = WSI.tag(e.target).value();
+			changeAttributeType(type_no);
 		});
 
 		_this.controls.tblAttributeList.click(function(e) {
@@ -195,7 +311,7 @@ WSI.screendef(function Userlist() {
 				id: "*",
 				name: _this.controls.txtAttributeName.value(),
 				type_no: _this.controls.selAttributeType.value(),
-				value: _this.controls.txtDefaultValue.value(),
+				value: null, // _this.controls.txtDefaultValue.value(),
 				visibled: _this.controls.chkVisibled.checked(),
 			};
 			tbody.append(buildRow(row));
@@ -203,13 +319,7 @@ WSI.screendef(function Userlist() {
 
 			normalizeList(tbody.finds("tr"));
 
-			_this.controls.txtAttributeName.value(null);
-			_this.controls.selAttributeType.value(_division.division_int_value);
-			_this.controls.txtDefaultValue.value(null);
-			_this.controls.chkVisibled.checked(true);
-
-			_this.controls.btnUpdate.styleClass({add:"invisible"});
-			_editing = null;
+			clearInput();
 		});
 
 		_this.controls.btnUpdate.click(function(e) {
@@ -219,19 +329,13 @@ WSI.screendef(function Userlist() {
 					id: "*",
 					name: _this.controls.txtAttributeName.value(),
 					type_no: _this.controls.selAttributeType.value(),
-					value: _this.controls.txtDefaultValue.value(),
+					value: null, //_this.controls.txtDefaultValue.value(),
 					visibled: _this.controls.chkVisibled.checked(),
 				};
 
 				updateRow(_editing, row);
 
-				_this.controls.txtAttributeName.value(null);
-				_this.controls.selAttributeType.value(_division.division_int_value);
-				_this.controls.txtDefaultValue.value(null);
-				_this.controls.chkVisibled.checked(true);
-
-				_this.controls.btnUpdate.styleClass({add:"invisible"});
-				_editing = null;
+				clearInput();
 			}
 		});
 

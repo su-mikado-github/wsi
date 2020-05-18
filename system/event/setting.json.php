@@ -74,6 +74,46 @@ class Setting extends DispatchHandler {
         $sql = Resource::from('/system/m_layer1_division_values/select/all[division_id].sql');
         $division_values = $db->rowset($sql, ['division_id'=>'DATA_TYPE']);
 
+        $sql = Resource::from('/system/m_layer1_divisions/select/all.sql');
+        $division1 = $db->rowset($sql);
+
+        $sql = Resource::from('/system/m_layer2_division_values/select/all.sql');
+        $division2 = array_reduce($db->rowset($sql), function($result, $item) {
+            $id = $item['division_id'];
+            $layer2_id = $item['layer2_division_id'];
+            $value_id = $item['division_value_id'];
+            if (!isset($result[$id])) {
+                $result[$id] = [$layer2_id => [$value_id => $item]];
+            }
+            else if (!isset($result[$id][$layer2_id])) {
+                $result[$id][$layer2_id] = [$value_id => $item];
+            }
+            else if (!isset($result[$id][$layer2_id][$value_id])) {
+                $result[$id][$layer2_id][$value_id] = $item;
+            }
+        }, []);
+
+        $sql = Resource::from('/system/m_layer3_division_values/select/all.sql');
+        $division3 = array_reduce($db->rowset($sql), function($result, $item) {
+            $id = $item['division_id'];
+            $layer2_id = $item['layer2_division_id'];
+            $layer3_id = $item['layer3_division_id'];
+            $value_id = $item['division_value_id'];
+            if (!isset($result[$id])) {
+                $result[$id] = [$layer2_id => [$layer3_id => [$value_id => $item]]];
+            }
+            else if (!isset($result[$id][$layer2_id])) {
+                $result[$id][$layer2_id] = [$layer3_id => [$value_id => $item]];
+            }
+            else if (!isset($result[$id][$layer2_id][$layer3_id])) {
+                $result[$id][$layer2_id][$layer3_id] = [$value_id => $item];
+            }
+            else if (!isset($result[$id][$layer2_id][$layer3_id][$value_id])) {
+                $result[$id][$layer2_id][$layer3_id][$value_id] = $item;
+            }
+        }, []);
+
+
 //         $sql = Resource::from('/system/m_user_attribute_types/select/all.sql');
 //         $list = $db->rowset($sql);
         $list = [];
@@ -81,7 +121,10 @@ class Setting extends DispatchHandler {
         return Status::ok()->set_params([
             'list' => $list,
             'division' => $division,
-            'division_values' => $division_values
+            'division_values' => $division_values,
+            'division1' => $division1,
+            'division2' => $division2,
+            'division3' => $division3,
         ]);
     }
 

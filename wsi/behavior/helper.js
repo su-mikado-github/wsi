@@ -462,6 +462,9 @@
 				else if (typeof(v) === "object" && typeof(v.tagName) === "string") {
 					_tag.appendChild(v);
 				}
+				else if (typeof(v) === "function") {
+					_this.append(v());
+				}
 			}
 			return _this;
 		};
@@ -478,6 +481,9 @@
 				}
 				else if (typeof(v) === "object" && typeof(v.tagName) === "string") {
 					_tag.removeChild(v);
+				}
+				else if (typeof(v) === "function") {
+					_this.remove(v());
 				}
 			}
 			return _this;
@@ -630,20 +636,24 @@
 
 		_this.show = function show(flag) {
 			if (typeof(flag) === "undefined" || flag === true) {
-				_tag.removeAttribute("hidden");
+//				_tag.removeAttribute("hidden");
+				_tag.style.display = null;
 			}
 			else if (flag === false) {
-				_tag.setAttributeNode(document.createAttribute("hidden"));
+//				_tag.setAttributeNode(document.createAttribute("hidden"));
+				_tag.style.display = "none";
 			}
 			return _this;
 		};
 
 		_this.hide = function hide(flag) {
 			if (typeof(flag) === "undefined" || flag === true) {
-				_tag.setAttributeNode(document.createAttribute("hidden"));
+//				_tag.setAttributeNode(document.createAttribute("hidden"));
+				_tag.style.display = "none";
 			}
 			else if (flag === false) {
-				_tag.removeAttribute("hidden");
+//				_tag.removeAttribute("hidden");
+				_tag.style.display = null;
 			}
 			return _this;
 		};
