@@ -15,4 +15,9 @@ WSI.namespace("system", function(ns) {
 		 Division2: 10,
 		 Division3: 11,
 	};
+
+	ns.EFlags = {
+		Off: 0,
+		On: 1,
+	};
 });

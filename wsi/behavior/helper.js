@@ -450,7 +450,7 @@
 		};
 
 		_this.append = function append(v, condition) {
-			if (condition !== false && v !== null) {
+			if (condition !== false && v) {
 				if (v instanceof Tag) {
 					_tag.appendChild(v.target);
 				}
@@ -464,6 +464,48 @@
 				}
 				else if (typeof(v) === "function") {
 					_this.append(v());
+				}
+			}
+			return _this;
+		};
+
+		_this.moveNext = function moveNext(condition, success) {
+			if (typeof(condition) === "function" && typeof(success) === "undefined") {
+				success = condition;
+				condition = true;
+			}
+
+			if (condition !== false) {
+				var target = _this.target;
+				var parent = target.parentNode;
+				var nextTarget = target.nextElementSibling;
+				if (parent && nextTarget) {
+					parent.removeChild(target);
+					nextTarget.insertAdjacentElement('afterend', target);
+					if (typeof(success) === "function") {
+						success();
+					}
+				}
+			}
+			return _this;
+		};
+
+		_this.movePrevious = function movePrevious(condition, success) {
+			if (typeof(condition) === "function" && typeof(success) === "undefined") {
+				success = condition;
+				condition = true;
+			}
+
+			if (condition !== false) {
+				var target = _this.target;
+				var parent = target.parentNode;
+				var previousTarget = target.previousElementSibling;
+				if (parent && previousTarget) {
+					parent.removeChild(target);
+					previousTarget.insertAdjacentElement('beforebegin', target);
+				}
+				if (typeof(success) === "function") {
+					success();
 				}
 			}
 			return _this;
@@ -558,8 +600,6 @@
 		_this.classList = function classList() {
 			return _tag.classList;
 		};
-
-
 
 		_this.data = function data(name, v) {
 			if (typeof(v) === "undefined") {

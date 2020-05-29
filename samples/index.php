@@ -9,6 +9,7 @@ require_once 'MinifierJavaScriptResponse.php';
 use WSI\Asset;
 use WSI\Core;
 use WSI\DatabaseConnector;
+use WSI\Logger;
 use WSI\DB\MysqlDatabaseConnection;
 
 $today = date('Ymd');
@@ -20,13 +21,13 @@ Core::instance()
     ->set_log_directory('D:/Temp')
     //ログカテゴリ毎の出力先ログファイル名
     ->set_log_mapping([
-        'debug' => 'develop-' . $today,
-        'trace' => 'develop-' . $today,
-        'dump' => 'develop-' . $today,
-        'information' => $today,
-        'warning' => $today,
-        'error' => $today,
-        'exception' => $today,
+        Logger::DEBUG => 'develop-' . $today,
+        Logger::TRACE => 'develop-' . $today,
+        Logger::DUMP => 'develop-' . $today,
+        Logger::INFORMATION => $today,
+        Logger::WARNING => $today,
+        Logger::ERROR => $today,
+        Logger::EXCEPTION => $today,
     ])
     //外部システムの接続先定義
     ->set_connectors([
@@ -43,7 +44,7 @@ Core::instance()
     ->set_assets([
         '.html' => Asset::define('/scene', 'WSI\HtmlResponse', 'text/html; charset=UTF-8'),
         '.js' => Asset::define('/behavior', 'WSI\JavaScriptResponse', 'text/javascript; charset=UTF-8'),
-//        '.js' => Asset::define('/behavior', 'Samples\MinifierJavaScriptResponse', 'text/javascript; charset=UTF-8'),
+//        '.js' => Asset::define('/behavior', 'Samples\MinifierJavaScriptResponse', 'text/javascript; charset=UTF-8'),      //JavaScriptコードをminimizeする
         '.css' => Asset::define('/makeup', 'WSI\CssResponse', 'text/css; charset=UTF-8'),
         '.map' => Asset::define('/maps', 'WSI\TextResponse', 'text/plain; charset=UTF-8'),
         '.json' => Asset::define('/event', 'WSI\JsonResponse', 'application/json; charset=UTF-8'),

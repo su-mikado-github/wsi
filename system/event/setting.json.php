@@ -128,6 +128,18 @@ class Setting extends DispatchHandler {
         ]);
     }
 
+    public function division1_selected(Request $request) {
+        $db = Database::connect();
+
+        $sql = Resource::from('/system/m_layer1_division_values/select/all[division_id].sql');
+        $division1_values = $db->rowset($sql, ['division_id'=>$_POST['division1_id']]);
+
+        return Status::ok()->set_params([
+            'division1_id' => $_POST['division1_id'],
+            'division_values' => $division1_values,
+        ]);
+    }
+
     public function save(Request $request) {
         $user_attributes = (empty($_POST['user_attributes']) ? [] : json_decode($_POST['user_attributes']));
 

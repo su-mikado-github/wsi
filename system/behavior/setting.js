@@ -8,6 +8,7 @@ WSI.screendef(function Userlist() {
 	var _this = this;
 
 	var ETypes = system.ETypes;
+	var EFlags = system.EFlags;
 
 	var _attribute_types = [];
 
@@ -28,23 +29,37 @@ WSI.screendef(function Userlist() {
 		_this.controls.txtDefaultDivision1Value.clear();
 		_this.controls.txtDefaultDivision2Value.clear();
 		_this.controls.txtDefaultDivision3Value.clear();
+		_this.controls.txtDefaultDivisionValue.clear();
 		division1.forEach(function(item, index) {
 			_this.controls.txtDefaultDivision1Value.append(
 				WSI.tag("option").value(item.division_id).text(item.division_name)
 			);
 		});
+		_this.controls.txtDefaultDivision1Value.change();
 	}
 
 	function selectDivision2Type(division2) {
 		_this.controls.txtDefaultDivision1Value.clear();
 		_this.controls.txtDefaultDivision2Value.clear();
 		_this.controls.txtDefaultDivision3Value.clear();
+		_this.controls.txtDefaultDivisionValue.clear();
+		division2.forEach(function(item, index) {
+			_this.controls.txtDefaultDivision1Value.append(
+				WSI.tag("option").value(item.division_id).text(item.division_name)
+			);
+		});
 	}
 
 	function selectDivision3Type(division3) {
 		_this.controls.txtDefaultDivision1Value.clear();
 		_this.controls.txtDefaultDivision2Value.clear();
 		_this.controls.txtDefaultDivision3Value.clear();
+		_this.controls.txtDefaultDivisionValue.clear();
+		division3.forEach(function(item, index) {
+			_this.controls.txtDefaultDivision1Value.append(
+				WSI.tag("option").value(item.division_id).text(item.division_name)
+			);
+		});
 	}
 
 	function changeAttributeType(type_no) {
@@ -58,6 +73,7 @@ WSI.screendef(function Userlist() {
 		_this.controls.txtDefaultDivision1Value.styleClass(type_no==ETypes.Division1 || type_no==ETypes.Division2 || type_no==ETypes.Division3 ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
 		_this.controls.txtDefaultDivision2Value.styleClass(type_no==ETypes.Division2 || type_no==ETypes.Division3 ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
 		_this.controls.txtDefaultDivision3Value.styleClass(type_no==ETypes.Division3 ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
+		_this.controls.txtDefaultDivisionValue.styleClass(type_no==ETypes.Division1 || type_no==ETypes.Division2 || type_no==ETypes.Division3 ? {add:"d-inline",remove:"d-none"} : {add:"d-none",remove:"d-inline"});
 
 		if (type_no == ETypes.Division1) {
 			selectDivision1Type(_division1);
@@ -83,10 +99,24 @@ WSI.screendef(function Userlist() {
 
 	function btnUp_click(e) {
 		console.log("up");
+
+		if (e.target.tagName === "BUTTON") {
+			WSI.tag(e.target.parentNode.parentNode.parentNode).movePrevious(function() {
+				var tbody = _this.controls.tblAttributeList.find("tbody");
+				normalizeList(tbody.finds("tr"));
+			});
+		}
 	}
 
 	function btnDown_click(e) {
 		console.log("down");
+
+		if (e.target.tagName === "BUTTON") {
+			WSI.tag(e.target.parentNode.parentNode.parentNode).moveNext(function() {
+				var tbody = _this.controls.tblAttributeList.find("tbody");
+				normalizeList(tbody.finds("tr"));
+			});
+		}
 	}
 
 	function btnRemove_click(e) {
@@ -122,13 +152,13 @@ WSI.screendef(function Userlist() {
 				var result = "";
 				if (row.value) {
 					if (typeof(row.value) === "object") {
-						if (typeof(row.value.division_id)) {
+						if (typeof(row.value.division_id) !== "undefined") {
 							result += row.value.division_id;
 						}
-						if (typeof(row.value.layer2_division_id)) {
+						if (typeof(row.value.layer2_division_id) !== "undefined") {
 							result = result + (!result.length ? row.value.layer2_division_id : "／"+row.value.layer2_division_id);
 						}
-						if (typeof(row.value.layer3_division_id)) {
+						if (typeof(row.value.layer3_division_id) !== "undefined") {
 							result = result + (!result.length ? row.value.layer3_division_id : "／"+row.value.layer3_division_id);
 						}
 					}
@@ -224,6 +254,47 @@ WSI.screendef(function Userlist() {
 		return null;
 	}
 
+	function getAttributeValueByControls(controls) {
+		var type_no = controls.selAttributeType.value() | 0;
+		switch (type_no) {
+		case ETypes.String:
+			return controls.txtDefaultStringValue.value();
+		case ETypes.Text:
+			return controls.txtDefaultTextValue.value();
+		case ETypes.Integer:
+			return controls.txtDefaultIntValue.value();
+		case ETypes.Double:
+			return controls.txtDefaultDoubleValue.value();
+		case ETypes.Date:
+			return controls.txtDefaultDateValue.value();
+		case ETypes.DateTime:
+			return (controls.txtDefaultDateValue.value() + " " + controls.txtDefaultTimeValue.value());
+		case ETypes.Time:
+			return controls.txtDefaultTimeValue.value();
+		case ETypes.Flag:
+			return (controls.txtDefaultFlagValue.checked() ? EFlags.On : EFlags.Off);
+		case ETypes.Division1:
+			return {
+				value_id: controls.txtDefaultDivisionValue.value(),
+				division_id: controls.txtDefaultDivision1Value.value(),
+			};
+		case ETypes.Division2:
+			return {
+				value_id: controls.txtDefaultDivisionValue.value(),
+				division_id: controls.txtDefaultDivision1Value.value(),
+				layer2_division_id: controls.txtDefaultDivision2Value.value(),
+			};
+		case ETypes.Division3:
+			return {
+				value_id: controls.txtDefaultDivisionValue.value(),
+				division_id: controls.txtDefaultDivision1Value.value(),
+				layer2_division_id: controls.txtDefaultDivision2Value.value(),
+				layer3_division_id: controls.txtDefaultDivision3Value.value(),
+			};
+		}
+		return null;
+	}
+
 	function clearInput() {
 
 		_this.controls.txtAttributeName.value(null);
@@ -239,10 +310,21 @@ WSI.screendef(function Userlist() {
 		_this.controls.txtDefaultDivision1Value.value(null);
 		_this.controls.txtDefaultDivision2Value.value(null);
 		_this.controls.txtDefaultDivision3Value.value(null);
+		_this.controls.txtDefaultDivisionValue.value(null);
 		_this.controls.chkVisibled.checked(true);
 
 		_this.controls.btnUpdate.styleClass({add:"invisible"});
+		_this.controls.btnCancel.styleClass({add:"invisible"});
 		_editing = null;
+	}
+
+	function division1_selected_success(result) {
+		result.params.division_values.forEach(function(v) {
+			var value_id = v.division_value_id;
+			var value_name = v.division_value_name;
+			var default_value_id = v.default_value_id;
+			_this.controls.txtDefaultDivisionValue.append(WSI.tag("option").value(value_id).text(value_name).attr("selected", value_id==default_value_id));
+		});
 	}
 
 	_this.initialize = function initialize() {
@@ -294,11 +376,29 @@ WSI.screendef(function Userlist() {
 			changeAttributeType(type_no);
 		});
 
+		_this.controls.txtDefaultDivision1Value.change(function(e) {
+			var type_no = _this.controls.selAttributeType.value() | 0;
+			switch (type_no) {
+				case ETypes.Division1: {
+					_this.controls.txtDefaultDivisionValue.clear();
+					WSI.method("<?=url('/system/setting.json') ?>", "division1_selected", { division1_id: _this.controls.txtDefaultDivision1Value.value() }, division1_selected_success);
+					break;
+				}
+				case ETypes.Division2: {
+					break;
+				}
+				case ETypes.Division3: {
+					break;
+				}
+			}
+		});
+
 		_this.controls.tblAttributeList.click(function(e) {
 			//
 			if (e.target.tagName === "TD") {
 				var tr = rowEdit(WSI.tag(e.target).parent());
 				_this.controls.btnUpdate.styleClass({remove:"invisible"});
+				_this.controls.btnCancel.styleClass({remove:"invisible"});
 				_editing = tr;
 			}
 		});
@@ -311,7 +411,7 @@ WSI.screendef(function Userlist() {
 				id: "*",
 				name: _this.controls.txtAttributeName.value(),
 				type_no: _this.controls.selAttributeType.value(),
-				value: null, // _this.controls.txtDefaultValue.value(),
+				value: getAttributeValueByControls(_this.controls),
 				visibled: _this.controls.chkVisibled.checked(),
 			};
 			tbody.append(buildRow(row));
@@ -326,10 +426,10 @@ WSI.screendef(function Userlist() {
 			if (_editing) {
 				var row = {
 					index: _attribute_types.length,
-					id: "*",
+					id: _editing.data("attribute_type_id"),
 					name: _this.controls.txtAttributeName.value(),
 					type_no: _this.controls.selAttributeType.value(),
-					value: null, //_this.controls.txtDefaultValue.value(),
+					value: getAttributeValueByControls(_this.controls),
 					visibled: _this.controls.chkVisibled.checked(),
 				};
 
@@ -337,6 +437,10 @@ WSI.screendef(function Userlist() {
 
 				clearInput();
 			}
+		});
+
+		_this.controls.btnCancel.click(function(e) {
+			clearInput();
 		});
 
 		_this.on("message.save", function(e) {
